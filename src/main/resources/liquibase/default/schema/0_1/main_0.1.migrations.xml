@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="create User table" author="Victor Nguen">
+        <createTable tableName="User">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="login" type="text">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="passwordHash" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="salt" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="firstName" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lastName" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="birthdate" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="create UserSession table" author="Victor Nguen">
+        <createTable tableName="UserSession">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="userId" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="validFrom" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="validUntil" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+                baseColumnNames="userId"
+                baseTableName="UserSession"
+                constraintName="fk_UserSession_userId_User_id"
+                referencedColumnNames="id"
+                referencedTableName="User"
+                onDelete="CASCADE"
+        />
+    </changeSet>
+
+    <changeSet id="create Role table" author="Victor Nguen">
+        <createTable tableName="Role">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(30)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="created" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="timestamp">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create RolePermission table" author="Victor Nguen">
+        <createTable tableName="RolePermission">
+            <column name="roleId" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="permission" type="varchar(30)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="RolePermission"
+                                 baseColumnNames="roleId"
+                                 constraintName="fk_RolePermission_roleId_Role_id"
+                                 referencedTableName="Role"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"
+        />
+    </changeSet>
+
+    <changeSet id="create UserRoles table" author="Victor Nguen">
+        <createTable tableName="UserRoles">
+            <column name="userId" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="roleId" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="UserRoles"
+                                 baseColumnNames="userId"
+                                 constraintName="fk_UserRoles_userId_User_id"
+                                 referencedTableName="User"
+                                 referencedColumnNames="id"
+        />
+        <addForeignKeyConstraint baseTableName="UserRoles"
+                                 baseColumnNames="roleId"
+                                 constraintName="fk_UserRoles_roleId_Role_id"
+                                 referencedTableName="Role"
+                                 referencedColumnNames="id"
+        />
+    </changeSet>
+
+    <changeSet id="setup default user roles" author="">
+
+    </changeSet>
+
+</databaseChangeLog>
